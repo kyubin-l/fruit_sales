@@ -1,4 +1,3 @@
-from venv import create
 from django.core.management.base import BaseCommand, CommandError
 from shops.models import City, Shop
 
@@ -18,10 +17,13 @@ class Command(BaseCommand):
             self.stdout.write('Continuing to delete')
             self.stdout.write(f'Deleting {Shop.objects.count()} Shop objects')
             Shop.objects.all().delete()
+
             self.stdout.write(f'Deleting {City.objects.count()} City objects')
             City.objects.all().delete()
+
             data = import_data('./shops.xlsx')
-            data.apply(create_objects, axis=1)
+            data.apply(create_objects, axis=1) # Applying the create_objects() function to each row in the data.
+
             self.stdout.write(f'Created {City.objects.count()} City objects')
             self.stdout.write(f'Created {Shop.objects.count()} Shop objects')
         else:
