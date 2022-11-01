@@ -8,7 +8,7 @@
 
 {% if all_shops %}
     {% for shop in all_shops %}
-        <li><a href="{% url 'shopdetail' shop.id %}">{{ shop.name }}</li>
+        <li><a href="{% url 'shopdetail' shop.id %}">{{ shop.name }}</a></li>
     {% endfor %}
 {% else %}
     <p>No shops available</p>

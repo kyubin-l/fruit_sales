@@ -24,4 +24,6 @@ urlpatterns = [
     path('city/<int:pk>/', shops.views.CityDetailView.as_view(), name='citydetail'),
     path('shop/', shops.views.ShopView.as_view(), name='shop'),
     path('shop/<int:pk>/', shops.views.ShopDetailView.as_view(), name='shopdetail'),
+    path('cityform/', shops.views.city_form, name='cityform'),
+    path('shopform/', shops.views.shop_form, name='shopform'),
 ]

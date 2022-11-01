@@ -5,7 +5,11 @@
 <body>
     <a href="{% url 'home' %}"> Home </a><br>
     <a href="{% url 'city' %}"> Cities </a><br>
-    <a href="{% url 'shop' %}"> Shops </a>
+    <a href="{% url 'shop' %}"> Shops </a><br>
+    <a href="{% url 'cityform' %}"> Register new city </a><br>
+    <a href="{% url 'shopform' %}"> Register new shop </a><br>
+
+
 
     {% block body %}{% endblock %}
 </body>

@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.views import generic
+from django.http import HttpResponseRedirect
 
 # Create your views here.
 from .models import City, Shop
+from .forms import CityForm, ShopForm
 
 
 def home(request):
@@ -33,3 +35,25 @@ class ShopView(generic.ListView):
 class ShopDetailView(generic.DetailView):
     model = Shop
     template_name = 'shops/shopdetail.html'
+
+
+def city_form(request):
+    if request.method == 'POST':
+        form = CityForm(request.post)
+        if form.is_valid():
+            return HttpResponseRedirect()
+    else:
+        form = CityForm()
+
+    return render(request,'shops/cityform.html', {'form': form})
+
+
+def shop_form(request):
+    if request.method == 'POST':
+        form = ShopForm(request.post)
+        if form.is_valid():
+            return HttpResponseRedirect()
+    else:
+        form = ShopForm()
+
+    return render(request,'shops/shopform.html', {'form': form})
