@@ -1,0 +1,12 @@
+<html>
+<head>
+    <title>{% block title %} Welcome to this amazing page {% endblock %}</title>
+</head>
+<body>
+    <a href="{% url 'home' %}"> Home </a><br>
+    <a href="{% url 'city' %}"> Cities </a><br>
+    <a href="{% url 'shop' %}"> Shops </a>
+
+    {% block body %}{% endblock %}
+</body>
+</html>

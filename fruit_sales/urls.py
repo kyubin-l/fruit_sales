@@ -19,6 +19,9 @@ import shops.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', shops.views.home, name='home'),
-
+    path('home/', shops.views.home, name='home'),
+    path('city/', shops.views.CityView.as_view(), name='city'),
+    path('city/<int:pk>/', shops.views.CityDetailView.as_view(), name='citydetail'),
+    path('shop/', shops.views.ShopView.as_view(), name='shop'),
+    path('shop/<int:pk>/', shops.views.ShopDetailView.as_view(), name='shopdetail'),
 ]
