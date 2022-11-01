@@ -20,7 +20,7 @@ class Command(BaseCommand):
             Shop.objects.all().delete()
             self.stdout.write(f'Deleting {City.objects.count()} City objects')
             City.objects.all().delete()
-            data = import_data()
+            data = import_data('./shops.xlsx')
             data.apply(create_objects, axis=1)
             self.stdout.write(f'Created {City.objects.count()} City objects')
             self.stdout.write(f'Created {Shop.objects.count()} Shop objects')
@@ -28,8 +28,8 @@ class Command(BaseCommand):
             self.stdout.write('Exiting')
         
 
-def import_data():
-    raw_data = pd.read_excel('shops.xlsx')
+def import_data(filename: str):
+    raw_data = pd.read_excel(filename)
     return raw_data
 
 
@@ -39,9 +39,9 @@ def create_objects(row):
         city=city,
         name=row['City'],
         code=row['Code'],
-        # address='tmp',
-        # postcode=row['Code'],
-        year_opened=2010
+        # address='address',
+        # postcode='postcode',
+        year_opened=2010,
     )
     shop.save()
     
