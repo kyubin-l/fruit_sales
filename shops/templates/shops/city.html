@@ -3,12 +3,12 @@
 {% block title %}Cities list{% endblock %}
 
 {% block body %}
-<h1>Cities list:</h1>
-{% if all_cities %}
-    {% for city in all_cities %}
-        <li><a href="{% url 'citydetail' city.id %}">{{ city.name }}</li>
-    {% endfor %}
-{% else %}
-    <p>No cities availabe</p>
-{% endif %}
+    <h1>Cities list:</h1>
+    {% if all_cities %}
+        {% for city in all_cities %}
+            <li><a href="{% url 'citydetail' city.id %}">{{ city.name }}</a></li>
+        {% endfor %}
+    {% else %}
+        <p>No cities availabe</p>
+    {% endif %}
 {% endblock %}

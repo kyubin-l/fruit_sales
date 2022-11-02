@@ -20,8 +20,10 @@ import shops.views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', shops.views.home, name='home'),
-    path('city/', shops.views.CityView.as_view(), name='city'),
+    path('city/', shops.views.CityView.as_view(), name='city_list'),
     path('city/<int:pk>/', shops.views.CityDetailView.as_view(), name='citydetail'),
-    path('shop/', shops.views.ShopView.as_view(), name='shop'),
+    path('shop/', shops.views.ShopView.as_view(), name='shop_list'),
     path('shop/<int:pk>/', shops.views.ShopDetailView.as_view(), name='shopdetail'),
+    path('cityform/', shops.views.city_form, name='create_city'),
+    path('shopform/', shops.views.shop_form, name='create_shop'),
 ]

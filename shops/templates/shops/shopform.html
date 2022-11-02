@@ -1,0 +1,12 @@
+{% extends "shops/base.html" %}
+
+{% block title %}Create shop{% endblock %}
+
+{% block body %}
+    <h1>Register new shop</h1>
+    <form action="{% url 'create_shop' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}
