@@ -3,14 +3,12 @@
 {% block title %}Shops list{% endblock %}
 
 {% block body %}
-
-<h1> Shops list: </h1>
-
-{% if all_shops %}
-    {% for shop in all_shops %}
-        <li><a href="{% url 'shopdetail' shop.id %}">{{ shop.name }}</a></li>
-    {% endfor %}
-{% else %}
-    <p>No shops available</p>
-{% endif %}
+    <h1> Shops list: </h1>
+    {% if all_shops %}
+        {% for shop in all_shops %}
+            <li><a href="{% url 'shopdetail' shop.id %}">{{ shop.name }}</a></li>
+        {% endfor %}
+    {% else %}
+        <p>No shops available</p>
+    {% endif %}
 {% endblock %}

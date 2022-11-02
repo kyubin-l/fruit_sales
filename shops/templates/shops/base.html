@@ -4,12 +4,10 @@
 </head>
 <body>
     <a href="{% url 'home' %}"> Home </a><br>
-    <a href="{% url 'city' %}"> Cities </a><br>
-    <a href="{% url 'shop' %}"> Shops </a><br>
-    <a href="{% url 'cityform' %}"> Register new city </a><br>
-    <a href="{% url 'shopform' %}"> Register new shop </a><br>
-
-
+    <a href="{% url 'city_list' %}"> Cities </a><br>
+    <a href="{% url 'shop_list' %}"> Shops </a><br>
+    <a href="{% url 'create_city' %}"> Register new city </a><br>
+    <a href="{% url 'create_shop' %}"> Register new shop </a><br>
 
     {% block body %}{% endblock %}
 </body>

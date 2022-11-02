@@ -1,5 +1,3 @@
-from multiprocessing.sharedctypes import Value
-from random import choices
 from django import forms
 from .models import City, Shop
 from django.utils import timezone
@@ -8,11 +6,8 @@ from django.utils import timezone
 def get_cities():
     return [
         (city.id, city.name) 
-        for 
-        city 
-        in
-        City.objects.all()
-    ]
+        for city in City.objects.all()
+        ]
 
 class CityForm(forms.Form):
     name = forms.CharField(label='City name', max_length=100)
@@ -29,12 +24,11 @@ class ShopForm(forms.Form):
 
     # Overwriting the parents is_valid function
     def is_valid(self):
-        valid = super(ShopForm, self).is_valid()
-        if not valid:
-            return valid
+        if not super(ShopForm, self).is_valid():
+            return False
 
         year_opened = self.cleaned_data['year_opened']
-        if (year_opened < 1850) or (year_opened > timezone.now().year):
+        if not (1850 < self.cleaned_data['year_opened'] < timezone.now().year):
             return False
 
         return True
