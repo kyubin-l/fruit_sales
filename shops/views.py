@@ -42,9 +42,7 @@ def city_form(request):
     if request.method == 'POST':
         form = CityForm(request.POST)
         if form.is_valid():
-            name = form.cleaned_data['name']
-            new_city = City(name=name)
-            new_city.save()
+            form.save()
             return HttpResponseRedirect(reverse('city_list'))
     else:
         form = CityForm()
@@ -56,15 +54,7 @@ def shop_form(request):
     if request.method == 'POST':
         form = ShopForm(request.POST)
         if form.is_valid():
-            new_shop = Shop(
-                city=form.cleaned_data['city'],
-                name=form.cleaned_data['name'],
-                code=form.cleaned_data['code'],
-                address=form.cleaned_data['address'],
-                postcode=form.cleaned_data['postcode'],
-                year_opened=form.cleaned_data['year_opened'],
-            )
-            new_shop.save()
+            form.save()
             return HttpResponseRedirect(reverse('shop_list'))
     else:
         form = ShopForm()
