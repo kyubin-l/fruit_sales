@@ -4,6 +4,8 @@
 
 {% block body %}
     <h1>{{ shop.name }}</h1>
+    <a href="{% url 'delete_shop' shop.id %}">Delete</a>
+    <a href="{% url 'update_shop' shop.id %}">Update</a>
     <li>City: {{ shop.city }}</li>
     <li>Name: {{ shop.name }}</li>
     <li>Code: {{ shop.code }}</li>

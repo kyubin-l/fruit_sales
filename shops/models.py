@@ -10,7 +10,7 @@ class City(models.Model):
 
 
 class Shop(models.Model):
-    city = models.ForeignKey(City, on_delete=models.PROTECT)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=5)
     address = models.CharField(max_length=100, null=True, blank=True)

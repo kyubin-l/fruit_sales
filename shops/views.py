@@ -1,15 +1,15 @@
 from django.shortcuts import render
-from django.views import generic
-from django.http import HttpResponseRedirect
+from django.views import generic, View
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from .models import City, Shop
 from .forms import CityForm, ShopForm
 
 
-def home(request):
-    return render(request, 'shops/home.html')
+class HomeView(generic.base.TemplateView):
+    template_name = 'shops/home.html'
 
 
 class CityView(generic.ListView):
@@ -38,25 +38,38 @@ class ShopDetailView(generic.DetailView):
     template_name = 'shops/shopdetail.html'
 
 
-def city_form(request):
-    if request.method == 'POST':
-        form = CityForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('city_list'))
-    else:
-        form = CityForm()
+class CityCreateView(generic.CreateView):
+    model = City
+    template_name = 'shops/cityform.html'
+    fields = 'name',
+    success_url = reverse_lazy('city_list')
+    
 
-    return render(request,'shops/cityform.html', {'form': form})
+class ShopCreateView(generic.CreateView):
+    form_class = ShopForm
+    template_name = 'shops/shopform.html'
+    success_url = reverse_lazy('shop_list')
 
 
-def shop_form(request):
-    if request.method == 'POST':
-        form = ShopForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('shop_list'))
-    else:
-        form = ShopForm()
+class CityDeleteView(generic.DeleteView):
+    model = City
+    success_url = reverse_lazy('city_list')
 
-    return render(request,'shops/shopform.html', {'form': form})
+
+class CityUpdateView(generic.UpdateView):
+    model = City
+    fields = ['name']
+    template_name = 'shops/city_update_form.html'
+    success_url = reverse_lazy('city_list')
+    
+
+class ShopDeleteView(generic.DeleteView):
+    model = Shop
+    success_url = reverse_lazy('shop_list')
+
+
+class ShopUpdateView(generic.UpdateView):
+    model = Shop
+    form_class = ShopForm
+    template_name = 'shops/shop_update_form.html'
+    success_url = reverse_lazy('shop_list')

@@ -5,9 +5,15 @@
 {% block body %}
     <h1>Cities list:</h1>
     {% if all_cities %}
+        <table cellspacing=10>
         {% for city in all_cities %}
-            <li><a href="{% url 'citydetail' city.id %}">{{ city.name }}</a></li>
+            <tr>
+                <td><li><a href="{% url 'citydetail' city.id %}">{{ city.name }}</a></li></td>
+                <td><a href="{% url 'delete_city' city.id %}">Delete</a></td>
+                <td><a href="{% url 'update_city' city.id %}">Update</a></td>
+            </tr>
         {% endfor %}
+        </table>
     {% else %}
         <p>No cities availabe</p>
     {% endif %}
