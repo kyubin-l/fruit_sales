@@ -3,7 +3,7 @@ from django.views import generic
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.urls import reverse
-# Create your views here.
+
 from .models import City, Shop
 from .forms import CityForm, ShopForm
 

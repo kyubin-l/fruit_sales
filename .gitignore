@@ -2,5 +2,4 @@
 db.sqlite3
 shops.xlsx
 *.xlsx
-shops/migrations/*py
 */__pycache__/*
