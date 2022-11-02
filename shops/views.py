@@ -3,8 +3,6 @@ from django.views import generic, View
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.urls import reverse, reverse_lazy
-from datetime import datetime
-from django.db.models import Q
 
 import shops.models as models
 from .forms import CityForm, ShopForm
@@ -75,84 +73,3 @@ class ShopUpdateView(generic.UpdateView):
     form_class = ShopForm
     template_name = 'shops/shop_update_form.html'
     success_url = reverse_lazy('shop_list')
-
-
-class WeeklyImportYearView(generic.TemplateView):
-    template_name = 'shops/weekly_import.html'
-
-    def get_context_data(self, *args, **kwargs):
-        dates = models.WeeklyShopSummary.objects.all().values_list('date', flat=True).distinct()
-        years = set([date.year for date in dates])
-        return {'years': years}
-
-
-class WeeklyImportMonthView(generic.TemplateView):
-    template_name = 'shops/weekly_import_monthview.html'
-
-    def get_context_data(self, *args, **kwargs):
-        dates = models.WeeklyShopSummary.objects.filter(
-            date__year=kwargs['year']
-            ).values_list(
-                'date', flat=True
-                ).distinct()
-        dates_uniquemonths = []
-        for date in dates:
-            if date.month not in [date_unique.month for date_unique in  dates_uniquemonths]:
-                dates_uniquemonths.append(date)
-        return {'months': dates_uniquemonths, 'year': kwargs['year']}
-
-
-class WeeklyImportWeekView(generic.TemplateView):
-    template_name = 'shops/weekly_import_weekview.html'
-
-
-    def get_context_data(self, *args, **kwargs):
-        dates = models.WeeklyShopSummary.objects.filter(
-            date__year=kwargs['year'],  
-            date__month=kwargs['month'],
-            ).values_list(
-                'date', flat=True
-                ).distinct()
-        dates_uniqueweek = []
-        for date in dates:
-            if date.day not in [date_unique.day for date_unique in  dates_uniqueweek]:
-                dates_uniqueweek.append(date)
-        
-        return {'weeks': dates_uniqueweek, 'year': kwargs['year'], 'month': kwargs['month']}
-
-
-class WeeklyImportShopView(generic.TemplateView):
-    template_name = 'shops/weekly_import_shopview.html'
-
-
-    def get_context_data(self, *args, **kwargs):
-        weekly_summaries = models.WeeklyShopSummary.objects.filter(
-            date__year=kwargs['year'],  
-            date__month=kwargs['month'],
-            date__day=kwargs['week'],
-            )
-        
-        return {'weekly_summaries': weekly_summaries, 'year': kwargs['year'], 'month': kwargs['month'], 'week':kwargs['week']}
-
-
-class WeeklyImportShopDetail(generic.TemplateView):
-    template_name = 'shops/weekly_import_shopdetail.html'
-    
-
-    def get_context_data(self, *args, **kwargs):
-        weekly_shop_summary = models.WeeklyShopSummary.objects.get(
-            shop=models.Shop.objects.get(code=kwargs['shopcode']),
-                date__year=kwargs['year'],  
-                date__month=kwargs['month'],
-                date__day=kwargs['week'],
-            )
-
-        weekly_sales = models.WeeklySale.objects.filter(
-            weekly_shop_summary=weekly_shop_summary
-            )
-
-        weekly_overheads = models.WeeklyOverhead.objects.filter(
-            weekly_shop_summary=weekly_shop_summary
-            )
-
-        return {'weekly_sales': weekly_sales, 'weekly_overheads': weekly_overheads}
