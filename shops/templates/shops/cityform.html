@@ -5,9 +5,10 @@
 {% block body %}
 
 <h1>Register new city</h1>
-
-{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Submit">
+<form action="{% url 'cityform' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit">
+</form>
 
 {% endblock %}

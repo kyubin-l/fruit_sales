@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.views import generic
 from django.http import HttpResponseRedirect
-
+from django.contrib import messages
+from django.urls import reverse
 # Create your views here.
 from .models import City, Shop
 from .forms import CityForm, ShopForm
@@ -39,9 +40,12 @@ class ShopDetailView(generic.DetailView):
 
 def city_form(request):
     if request.method == 'POST':
-        form = CityForm(request.post)
+        form = CityForm(request.POST)
         if form.is_valid():
-            return HttpResponseRedirect()
+            name = form.cleaned_data['name']
+            new_city = City(name=name)
+            new_city.save()
+            return HttpResponseRedirect(reverse('city'))
     else:
         form = CityForm()
 
@@ -50,9 +54,24 @@ def city_form(request):
 
 def shop_form(request):
     if request.method == 'POST':
-        form = ShopForm(request.post)
+        form = ShopForm(request.POST)
         if form.is_valid():
-            return HttpResponseRedirect()
+            city = form.cleaned_data['city']
+            name = form.cleaned_data['name']
+            code = form.cleaned_data['code']
+            address = form.cleaned_data['address']
+            postcode = form.cleaned_data['postcode']
+            year_opened = form.cleaned_data['year_opened']
+            new_shop = Shop(
+                city=city,
+                name=name,
+                code=code,
+                address=address,
+                postcode=postcode,
+                year_opened=year_opened,
+            )
+            new_shop.save()
+            return HttpResponseRedirect(reverse('shop'))
     else:
         form = ShopForm()
 
