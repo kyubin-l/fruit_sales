@@ -9,6 +9,11 @@ def get_cities():
         for city in City.objects.all()
         ]
 
+class CityForm(forms.ModelForm):
+    class Meta:
+        model = City
+        fields = ['name']
+
 class CityForm(forms.Form):
     name = forms.CharField(label='City name', max_length=100)
 
@@ -22,12 +27,11 @@ class ShopForm(forms.Form):
     year_opened = forms.IntegerField(label='Year opened')
 
 
-    # Overwriting the parents is_valid function
+    # Overwriting the parent is_valid function
     def is_valid(self):
         if not super(ShopForm, self).is_valid():
             return False
 
-        year_opened = self.cleaned_data['year_opened']
         if not (1850 < self.cleaned_data['year_opened'] < timezone.now().year):
             return False
 
