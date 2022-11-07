@@ -3,6 +3,8 @@ from django.views import generic, View
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.urls import reverse, reverse_lazy
+from datetime import datetime
+from django.db.models import Q
 
 import shops.models as models
 from .forms import CityForm, ShopForm
@@ -73,7 +75,6 @@ class ShopUpdateView(generic.UpdateView):
     form_class = ShopForm
     template_name = 'shops/shop_update_form.html'
     success_url = reverse_lazy('shop_list')
-<<<<<<< HEAD
 
 
 class WeeklyImportYearView(generic.TemplateView):
@@ -158,6 +159,3 @@ class WeeklyImportShopDetail(generic.TemplateView):
 
 
 
-        ...
-=======
->>>>>>> 4649f53f9f3d511fe8930e9fe27006e51f871f93
