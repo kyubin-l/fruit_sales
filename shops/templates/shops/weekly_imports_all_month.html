@@ -1,0 +1,16 @@
+<html>
+    <label>Select Month<label>
+        <script src="https://unpkg.com/htmx.org@1.8.4" crossorigin="anonymous"></script>
+        <select name="chosen_month"
+            hx-get={% url 'show_weeks' year %}
+            hx-trigger="change"
+            hx-target="#weeks"
+            hx-swap="innterHTML"
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        >
+            <option>----</option>
+            {% for month in months%}
+                <option value={{ month.month }}>{{ month|date:'F' }}</option>
+            {% endfor %}
+        </select>
+</html>

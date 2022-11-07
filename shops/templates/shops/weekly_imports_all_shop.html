@@ -1,0 +1,16 @@
+<html>
+    <label>Select Shop<label>
+        <script src="https://unpkg.com/htmx.org@1.8.4" crossorigin="anonymous"></script>
+        <select name="chosen_shop"
+            hx-get={% url 'show_details' year month week %}
+            hx-trigger="change"
+            hx-target="#details"
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        >
+            <option>----</option>
+            {% for weekly_summary in weekly_summaries %}
+                <option value={{ weekly_summary.shop }}>{{ weekly_summary.shop }}</option>
+            {% endfor %}
+        </select>
+ </html>
+

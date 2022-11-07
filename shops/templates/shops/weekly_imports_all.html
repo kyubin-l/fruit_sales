@@ -1,6 +1,23 @@
-<html>
+{% extends "shops/base.html" %}
+{% block title %}Weekly shop details{% endblock %}
 
-
-    <div id='import_detail'></div>
-<html>
-
+{% block body %}
+    <label>Select Year<label>
+        <script src="https://unpkg.com/htmx.org@1.8.4" crossorigin="anonymous"></script>
+        <select name="chosen_year"
+            hx-get={% url 'show_months' %}
+            hx-trigger="change"
+            hx-target="#months"
+            hx-swap="innterHTML"
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        >
+            <option value="select year">----</option>
+            {% for year in years%}
+                <option value={{ year }}>{{ year }}</option>
+            {% endfor %}
+        </select>        
+    <div id='months'></div>
+    <div id='weeks'></div>
+    <div id='shops'></div>
+    <div id='details'></div>
+{% endblock %}

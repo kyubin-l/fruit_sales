@@ -105,7 +105,6 @@ class WeeklyImportMonthView(generic.TemplateView):
 class WeeklyImportWeekView(generic.TemplateView):
     template_name = 'shops/weekly_import_weekview.html'
 
-
     def get_context_data(self, *args, **kwargs):
         dates = models.WeeklyShopSummary.objects.filter(
             date__year=kwargs['year'],  
@@ -124,7 +123,6 @@ class WeeklyImportWeekView(generic.TemplateView):
 class WeeklyImportShopView(generic.TemplateView):
     template_name = 'shops/weekly_import_shopview.html'
 
-
     def get_context_data(self, *args, **kwargs):
         weekly_summaries = models.WeeklyShopSummary.objects.filter(
             date__year=kwargs['year'],  
@@ -138,7 +136,6 @@ class WeeklyImportShopView(generic.TemplateView):
 class WeeklyImportShopDetail(generic.TemplateView):
     template_name = 'shops/weekly_import_shopdetail.html'
     
-
     def get_context_data(self, *args, **kwargs):
         weekly_shop_summary = models.WeeklyShopSummary.objects.get(
             shop=models.Shop.objects.get(code=kwargs['shopcode']),
@@ -158,4 +155,43 @@ class WeeklyImportShopDetail(generic.TemplateView):
         return {'weekly_sales': weekly_sales, 'weekly_overheads': weekly_overheads}
 
 
+class WeeklyImportAll(WeeklyImportYearView):
+    template_name = 'shops/weekly_imports_all.html'
 
+
+class WeeklyImportAllMonths(WeeklyImportMonthView):
+    template_name = 'shops/weekly_imports_all_month.html'
+
+    def get_context_data(self, *args, **kwargs):
+        return super().get_context_data(*args, year=self.request.GET['chosen_year'])
+
+
+class WeeklyImportAllWeeks(WeeklyImportWeekView):
+    template_name = 'shops/weekly_imports_all_week.html'
+
+    def get_context_data(self, *args, **kwargs):
+        return super().get_context_data(*args, year=kwargs['year'], month=self.request.GET['chosen_month'])
+
+
+class WeeklyImportAllShops(WeeklyImportShopView):
+    template_name = 'shops/weekly_imports_all_shop.html'
+
+    def get_context_data(self, *args, **kwargs):
+        return super().get_context_data(
+            *args,
+            year=kwargs['year'],
+            month=kwargs['month'],
+            week=self.request.GET['chosen_week']
+            )
+
+
+class WeeklyImportAllDetails(WeeklyImportShopDetail):
+    template_name = 'shops/weekly_imports_all_details.html'
+
+    def get_context_data(self, *args, **kwargs):
+        return super().get_context_data(            *args,
+            year=kwargs['year'],
+            month=kwargs['month'],
+            week=kwargs['week'],
+            shopcode=self.request.GET['chosen_shop']
+            )
