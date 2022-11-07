@@ -4,6 +4,7 @@ from shops.models import City, Shop
 import pandas as pd
 
 
+
 class Command(BaseCommand):
     help = 'Deletes all cities and shops from current database and \
         store new data from the excel sheet.'
@@ -22,7 +23,7 @@ class Command(BaseCommand):
             City.objects.all().delete()
 
             data = import_data('./shops.xlsx')
-            data.apply(create_objects, axis=1) # Applying the create_objects() function to each row in the data.
+            data.apply(create_object, axis=1) # Applying the create_objects() function to each row in the data.
 
             self.stdout.write(f'Created {City.objects.count()} City objects')
             self.stdout.write(f'Created {Shop.objects.count()} Shop objects')
@@ -35,7 +36,7 @@ def import_data(filename: str):
     return raw_data
 
 
-def create_objects(row):
+def create_object(row):
     city, created = City.objects.get_or_create(name=row['Name'])
     shop = Shop(
         city=city,

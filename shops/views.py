@@ -1,15 +1,15 @@
 from django.shortcuts import render
-from django.views import generic
-from django.http import HttpResponseRedirect
+from django.views import generic, View
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
-from django.urls import reverse
-# Create your views here.
-from .models import City, Shop
+from django.urls import reverse, reverse_lazy
+
+import shops.models as models
 from .forms import CityForm, ShopForm
 
 
-def home(request):
-    return render(request, 'shops/home.html')
+class HomeView(generic.base.TemplateView):
+    template_name = 'shops/home.html'
 
 
 class CityView(generic.ListView):
@@ -17,11 +17,11 @@ class CityView(generic.ListView):
     context_object_name = 'all_cities'
 
     def get_queryset(self):
-        return City.objects.all()
+        return models.City.objects.all()
 
 
 class CityDetailView(generic.DetailView):
-    model = City
+    model = models.City
     template_name = 'shops/citydetail.html'
 
 
@@ -30,43 +30,46 @@ class ShopView(generic.ListView):
     context_object_name = 'all_shops'
 
     def get_queryset(self):
-        return Shop.objects.all()
+        return models.Shop.objects.all()
 
 
 class ShopDetailView(generic.DetailView):
-    model = Shop
+    model = models.Shop
     template_name = 'shops/shopdetail.html'
 
 
-def city_form(request):
-    if request.method == 'POST':
-        form = CityForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            new_city = City(name=name)
-            new_city.save()
-            return HttpResponseRedirect(reverse('city_list'))
-    else:
-        form = CityForm()
+class CityCreateView(generic.CreateView):
+    model = models.City
+    template_name = 'shops/cityform.html'
+    fields = 'name',
+    success_url = reverse_lazy('city_list')
+    
 
-    return render(request,'shops/cityform.html', {'form': form})
+class ShopCreateView(generic.CreateView):
+    form_class = ShopForm
+    template_name = 'shops/shopform.html'
+    success_url = reverse_lazy('shop_list')
 
 
-def shop_form(request):
-    if request.method == 'POST':
-        form = ShopForm(request.POST)
-        if form.is_valid():
-            new_shop = Shop(
-                city=form.cleaned_data['city'],
-                name=form.cleaned_data['name'],
-                code=form.cleaned_data['code'],
-                address=form.cleaned_data['address'],
-                postcode=form.cleaned_data['postcode'],
-                year_opened=form.cleaned_data['year_opened'],
-            )
-            new_shop.save()
-            return HttpResponseRedirect(reverse('shop_list'))
-    else:
-        form = ShopForm()
+class CityDeleteView(generic.DeleteView):
+    model = models.City
+    success_url = reverse_lazy('city_list')
 
-    return render(request,'shops/shopform.html', {'form': form})
+
+class CityUpdateView(generic.UpdateView):
+    model = models.City
+    fields = ['name']
+    template_name = 'shops/city_update_form.html'
+    success_url = reverse_lazy('city_list')
+    
+
+class ShopDeleteView(generic.DeleteView):
+    model = models.Shop
+    success_url = reverse_lazy('shop_list')
+
+
+class ShopUpdateView(generic.UpdateView):
+    model = models.Shop
+    form_class = ShopForm
+    template_name = 'shops/shop_update_form.html'
+    success_url = reverse_lazy('shop_list')

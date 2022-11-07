@@ -1,0 +1,49 @@
+{% extends "shops/base.html" %}
+
+{% block title %}Details{% endblock %}
+
+{% block body %}
+    <h1>Sales details</h1>
+
+    <table cellspacing=10>
+        <tr>
+            <th>Fruit</th>
+            <th>Units bought</th>
+            <th>Cost per unit</th>
+            <th>Units sold</th>
+            <th>Price per unit</th>
+            <th>Units wastage</th>
+        </tr>
+
+
+        {% for weekly_sale in weekly_sales %}
+        <tr>
+            <th>{{ weekly_sale.fruit }}</th>
+            <th>{{ weekly_sale.units_bought }}</th>
+            <th>{{ weekly_sale.cost_per_unit }}</th>
+            <th>{{ weekly_sale.units_sold }}</th>
+            <th>{{ weekly_sale.price_per_unit }}</th>
+            <th>{{ weekly_sale.units_wastage }}</th>
+        </tr>
+
+        {% endfor %}
+    </table>
+
+    <h1>Overhead details</h1>
+
+
+    <table cellspacing=10>
+        <tr>
+            <th>Overhead Type</th>
+            <th>Overhead Amount</th>
+        </tr>
+        {% for overhead in weekly_overheads %}
+        <tr>
+            <th>{{ overhead.overhead }}</th>
+            <th>{{ overhead.amount }}</th>
+        </tr>
+        {% endfor %}
+        
+    </table>
+
+{% endblock %}

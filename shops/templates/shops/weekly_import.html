@@ -1,0 +1,12 @@
+{% extends "shops/base.html" %}
+
+{% block title %}Select year{% endblock %}
+
+{% block body %}
+    <h1>Select year</h1>
+    {% if years %}
+        {% for year in years %}
+            <li><a href="{% url 'weekly_import_monthview' year %}">{{ year }}</a></li>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

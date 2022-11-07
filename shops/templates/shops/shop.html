@@ -5,9 +5,15 @@
 {% block body %}
     <h1> Shops list: </h1>
     {% if all_shops %}
+        <table cellspacing=10>
         {% for shop in all_shops %}
-            <li><a href="{% url 'shopdetail' shop.id %}">{{ shop.name }}</a></li>
+            <tr>
+                <td><li><a href="{% url 'shopdetail' shop.id %}">{{ shop.name }}</a></li></td>
+                <td><a href="{% url 'delete_shop' shop.id %}">Delete</a></td>
+                <td><a href="{% url 'update_shop' shop.id %}">Update</a></td>
+            </tr>
         {% endfor %}
+        </table>
     {% else %}
         <p>No shops available</p>
     {% endif %}

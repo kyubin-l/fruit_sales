@@ -19,11 +19,23 @@ import shops.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', shops.views.home, name='home'),
+    path('home/', shops.views.HomeView.as_view(), name='home'),
     path('city/', shops.views.CityView.as_view(), name='city_list'),
     path('city/<int:pk>/', shops.views.CityDetailView.as_view(), name='citydetail'),
     path('shop/', shops.views.ShopView.as_view(), name='shop_list'),
     path('shop/<int:pk>/', shops.views.ShopDetailView.as_view(), name='shopdetail'),
-    path('cityform/', shops.views.city_form, name='create_city'),
-    path('shopform/', shops.views.shop_form, name='create_shop'),
+    path('cityform/', shops.views.CityCreateView.as_view(), name='create_city'),
+    path('shopform/', shops.views.ShopCreateView.as_view(), name='create_shop'),
+    path('<int:pk>/deletecity/', shops.views.CityDeleteView.as_view(), name='delete_city'),
+    path('<int:pk>/updatecity/', shops.views.CityUpdateView.as_view(), name='update_city'),
+    path('<int:pk>/deleteshop/', shops.views.ShopDeleteView.as_view(), name='delete_shop'),
+    path('<int:pk>/updateshop/', shops.views.ShopUpdateView.as_view(), name='update_shop'),
+<<<<<<< HEAD
+    path('weekly_import/', shops.views.WeeklyImportYearView.as_view(), name='weekly_import_yearview'),
+    path('weekly_import/<int:year>/', shops.views.WeeklyImportMonthView.as_view(), name='weekly_import_monthview'),
+    path('weekly_import/<int:year>/<int:month>/', shops.views.WeeklyImportWeekView.as_view(), name='weekly_import_weekview'),
+    path('weekly_import/<int:year>/<int:month>/<int:week>/', shops.views.WeeklyImportShopView.as_view(), name='weekly_import_shopview'),
+    path('weekly_import/<int:year>/<int:month>/<int:week>/<str:shopcode>', shops.views.WeeklyImportShopDetail.as_view(), name='weekly_import_shopdetail')
+=======
+>>>>>>> 7a44701... converting all views to CBVs, adding update and delete pages
 ]

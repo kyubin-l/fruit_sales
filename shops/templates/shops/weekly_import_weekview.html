@@ -1,0 +1,13 @@
+{% extends "shops/base.html" %}
+
+{% block title %}Select week{% endblock %}
+
+{% block body %}
+    <h1>Select week</h1>
+    {% if weeks %}
+        {% for week in weeks %}
+        {% comment %} {{ week }} {% endcomment %}
+            <li><a href="{% url 'weekly_import_shopview' year month week.day %}">{{ week|date:'d' }}</li>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
