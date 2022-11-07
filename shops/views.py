@@ -156,3 +156,7 @@ class WeeklyImportShopDetail(generic.TemplateView):
             )
 
         return {'weekly_sales': weekly_sales, 'weekly_overheads': weekly_overheads}
+
+
+
+        ...
