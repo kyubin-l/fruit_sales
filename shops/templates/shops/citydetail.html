@@ -3,5 +3,7 @@
 {% block title %}{{ city.name }}{% endblock %}
 
 {% block body %}
-    <h1>{{ city.name }}<h1>
+    <h1>{{ city.name }}</h1>
+    <a href="{% url 'delete_city' city.id %}">Delete</a>
+    <a href="{% url 'update_city' city.id %}">Update</a>
 {% endblock %}

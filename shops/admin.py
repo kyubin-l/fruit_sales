@@ -1,7 +1,12 @@
 from django.contrib import admin
-from .models import City, Shop
+import shops.models as models
 
-admin.site.register(City)
-admin.site.register(Shop)
+admin.site.register(models.City)
+admin.site.register(models.Shop)
+admin.site.register(models.Fruit)
+admin.site.register(models.WeeklySale)
+admin.site.register(models.WeeklyShopSummary)
+admin.site.register(models.WeeklyOverhead)
+
 
 # Register your models here.
