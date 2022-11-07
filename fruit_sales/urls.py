@@ -30,9 +30,12 @@ urlpatterns = [
     path('<int:pk>/updatecity/', shops.views.CityUpdateView.as_view(), name='update_city'),
     path('<int:pk>/deleteshop/', shops.views.ShopDeleteView.as_view(), name='delete_shop'),
     path('<int:pk>/updateshop/', shops.views.ShopUpdateView.as_view(), name='update_shop'),
+<<<<<<< HEAD
     path('weekly_import/', shops.views.WeeklyImportYearView.as_view(), name='weekly_import_yearview'),
     path('weekly_import/<int:year>/', shops.views.WeeklyImportMonthView.as_view(), name='weekly_import_monthview'),
     path('weekly_import/<int:year>/<int:month>/', shops.views.WeeklyImportWeekView.as_view(), name='weekly_import_weekview'),
     path('weekly_import/<int:year>/<int:month>/<int:week>/', shops.views.WeeklyImportShopView.as_view(), name='weekly_import_shopview'),
     path('weekly_import/<int:year>/<int:month>/<int:week>/<str:shopcode>', shops.views.WeeklyImportShopDetail.as_view(), name='weekly_import_shopdetail')
+=======
+>>>>>>> 7a44701... converting all views to CBVs, adding update and delete pages
 ]
