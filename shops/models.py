@@ -64,7 +64,7 @@ class WeeklyOverhead(models.Model):
     )
     weekly_shop_summary = models.ForeignKey(WeeklyShopSummary, on_delete=models.PROTECT)
     overhead = models.CharField(max_length=30, choices=overhead_type)
-    amount = models.IntegerField(null=True, blank=True)
+    amount = models.IntegerField(default=0)
 
 
     def __str__(self) -> str:
