@@ -53,26 +53,12 @@ urlpatterns = [
     ),
     path(
         'weekly_import_details/',
-        shops.views.WeeklyImportAll.as_view(),
+        shops.views.WeeklyImportDropView.as_view(),
         name='weekly_views'
     ),
     path(
-        'weekly_import_details/year/',
-        shops.views.WeeklyImportAllMonths.as_view(),
-        name='show_months'),
-    path(
-        'weekly_import_details/<int:year>/month/',
-        shops.views.WeeklyImportAllWeeks.as_view(),
-        name='show_weeks'
-    ),
-    path(
-        'weekly_import_details/<int:year>/<int:month>/week',
-        shops.views.WeeklyImportAllShops.as_view(),
-        name='show_shops'
-    ),
-    path(
-        'weekly_import_details/<int:year>/<int:month>/<int:week>/shop',
-        shops.views.WeeklyImportAllDetails.as_view(),
+        'weekly_import_details/show/',
+        shops.views.WeeklyImportDetailView.as_view(),
         name='show_details'
     )
 ]
