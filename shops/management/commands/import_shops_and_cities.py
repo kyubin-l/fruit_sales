@@ -14,7 +14,9 @@ class Command(BaseCommand):
     
     def handle(self, *args, **kwargs):
         delete_data = input('You are about to delete all existing shops and cities, are you sure? (YES/Y to confirm, any other key to quit) ')
-        if delete_data.lower() in ['y', 'yes']:
+        if delete_data.lower() not in ['y', 'yes']:
+            pass
+        else:
             self.stdout.write('Continuing to delete')
             self.stdout.write(f'Deleting {Shop.objects.count()} Shop objects')
             Shop.objects.all().delete()
@@ -22,12 +24,11 @@ class Command(BaseCommand):
             self.stdout.write(f'Deleting {City.objects.count()} City objects')
             City.objects.all().delete()
 
-            data = import_data('./shops.xlsx')
+            data = import_data('./data/shops.xlsx')
             data.apply(create_object, axis=1) # Applying the create_objects() function to each row in the data.
 
             self.stdout.write(f'Created {City.objects.count()} City objects')
             self.stdout.write(f'Created {Shop.objects.count()} Shop objects')
-        else:
             self.stdout.write('Exiting')
         
 
@@ -37,7 +38,7 @@ def import_data(filename: str):
 
 
 def create_object(row):
-    city, created = City.objects.get_or_create(name=row['Name'])
+    city, _ = City.objects.get_or_create(name=row['Name'])
     shop = Shop(
         city=city,
         name=row['City'],

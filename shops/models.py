@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
-
+from django.conf import settings
+import os
 # Create your models here.
 
 class City(models.Model):
@@ -18,7 +19,6 @@ class Shop(models.Model):
     postcode = models.CharField(max_length=100, null=True, blank=True)
     year_opened = models.IntegerField(default=0)
 
-
     def __str__(self) -> str:
         return f'{self.code}'
 
@@ -26,23 +26,28 @@ class Shop(models.Model):
 class Fruit(models.Model):
     name = models.CharField(max_length=20)
 
-
     def __str__(self) -> str:
         return f'{self.name}'
 
 
 class WeeklyShopSummary(models.Model):
-    shop = models.ForeignKey(Shop, on_delete=models.PROTECT)
+    shop = models.ForeignKey(Shop, on_delete=models.PROTECT, null=True, blank=True)
     date = models.DateField(default=timezone.now)
-    upload = models.CharField(max_length=20, null=True, blank=True)
-
+    upload = models.FileField(upload_to='uploads')
 
     def __str__(self) -> str:
         return f'{self.shop}, {self.date}'
 
+    def filename(self):
+        return settings.MEDIA_ROOT / self.upload.name
+
 
 class WeeklySale(models.Model):
-    weekly_shop_summary = models.ForeignKey(WeeklyShopSummary, on_delete=models.PROTECT, null=True)
+    weekly_shop_summary = models.ForeignKey(
+        WeeklyShopSummary, 
+        on_delete=models.PROTECT, 
+        null=True
+        )
     fruit = models.ForeignKey(Fruit, on_delete=models.PROTECT)
 
     units_bought = models.IntegerField(null=True, blank=True)
@@ -51,7 +56,6 @@ class WeeklySale(models.Model):
     price_per_unit = models.FloatField(null=True, blank=True)
     units_wastage = models.IntegerField(null=True, blank=True)
 
-    
     def __str__(self) -> str:
         return f'{self.weekly_shop_summary}, {self.fruit}'
     
@@ -62,10 +66,12 @@ class WeeklyOverhead(models.Model):
         ('Premises cost', 'premises cost'),
         ('Other overheads', 'other overheads'),
     )
-    weekly_shop_summary = models.ForeignKey(WeeklyShopSummary, on_delete=models.PROTECT)
+    weekly_shop_summary = models.ForeignKey(
+        WeeklyShopSummary, 
+        on_delete=models.PROTECT
+        )
     overhead = models.CharField(max_length=30, choices=overhead_type)
     amount = models.IntegerField(default=0)
-
 
     def __str__(self) -> str:
         return f'{self.weekly_shop_summary}, {self.overhead}, {self.amount}'

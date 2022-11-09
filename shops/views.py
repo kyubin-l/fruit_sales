@@ -5,10 +5,18 @@ from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from datetime import datetime, timedelta
 from django.db.models import Q
+from django.conf import settings
+from django.utils import timezone
+from datetime import datetime
+from django.core.exceptions import ObjectDoesNotExist
 
 import shops.models as models
-from .forms import CityForm, ShopForm
+import shops.forms as forms
 from bootstrap_datepicker_plus.widgets import DatePickerInput
+
+import re
+import pandas as pd
+import shops.utilities.import_helpers as import_helpers
 
 
 class HomeView(generic.base.TemplateView):
@@ -49,7 +57,7 @@ class CityCreateView(generic.CreateView):
     
 
 class ShopCreateView(generic.CreateView):
-    form_class = ShopForm
+    form_class = forms.ShopForm
     template_name = 'shops/shopform.html'
     success_url = reverse_lazy('shop_list')
 
@@ -73,7 +81,7 @@ class ShopDeleteView(generic.DeleteView):
 
 class ShopUpdateView(generic.UpdateView):
     model = models.Shop
-    form_class = ShopForm
+    form_class = forms.ShopForm
     template_name = 'shops/shop_update_form.html'
     success_url = reverse_lazy('shop_list')
 
@@ -199,4 +207,37 @@ class WeeklyImportDetailView(generic.TemplateView):
             )
 
         return {'weekly_sales': weekly_sales, 'weekly_overheads': weekly_overheads}
+
+
+def weekly_summary_upload(request):
+    if request.method == 'POST':
+        form = forms.WeeklySummaryForm(request.POST, request.FILES)
+        if form.is_valid():
+            with form.instance.upload.open() as input_file:
+                fruit_data, overhead_data, shop_code, date_object \
+                    = import_helpers.import_data(input_file)
+                shop = models.Shop.objects.get(code=shop_code)
+                form.instance.shop = shop
+                form.instance.date = date_object
+                form.save()
+                fruit_data.apply(
+                    import_helpers.create_sale_objects, 
+                    axis=1, 
+                    weekly_shop_summary=form.instance
+                    )
+                overhead_data.apply(
+                    import_helpers.create_overhead_objects, 
+                    axis=1, 
+                    weekly_shop_summary=form.instance
+                    )
+                messages.info(request, 'File uploaded successfully')
+            return HttpResponseRedirect(reverse('upload_summary'))
+    else:
+        form = forms.WeeklySummaryForm()
+    return render(request, 'shops/weekly_summary_form.html', {'form': form})
+
+
+
+
+
 
