@@ -1,5 +1,5 @@
 from django.contrib import admin
-import shops.models as models
+from shops import models
 
 admin.site.register(models.City)
 admin.site.register(models.Shop)

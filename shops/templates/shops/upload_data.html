@@ -1,0 +1,12 @@
+{% extends "shops/base.html" %}
+
+{% block title %}Upload data{% endblock %}
+
+{% block body %}
+    <h1>Upload data</h1>
+    <form method="post" enctype='multipart/form-data' >{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Upload">
+    </form>
+{% endblock %}
+

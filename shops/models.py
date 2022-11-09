@@ -31,7 +31,7 @@ class Fruit(models.Model):
 
 
 class WeeklyShopSummary(models.Model):
-    shop = models.ForeignKey(Shop, on_delete=models.PROTECT, null=True, blank=True)
+    shop = models.ForeignKey(Shop, on_delete=models.PROTECT)
     date = models.DateField(default=timezone.now)
     upload = models.FileField(upload_to='uploads')
 

@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
-import shops.models as models
+from shops import models
+
 from django.utils import timezone
 from datetime import datetime
 
@@ -11,11 +12,11 @@ def import_data(file_path: str):
     data = pd.read_excel(file_path, sheet_name=None)
     fruit_data, overhead_data = data['by fruit'], data['overheads']
     date_code = str(file_path).split('/')[-1]
-    date, shop_code = date_code.rsplit('-', 1)
+    raw_data, shop_code = date_code.rsplit('-', 1)
     shop_code = shop_code.replace('.xlsx', '')
-    date_object = timezone.make_aware(datetime.strptime(date, '%Y-%m-%d'))
+    date = timezone.make_aware(datetime.strptime(raw_data, '%Y-%m-%d'))
 
-    return fruit_data, overhead_data, shop_code, date_object
+    return fruit_data, overhead_data, shop_code, date
 
 
 def create_sale_objects(row, weekly_shop_summary):
@@ -43,3 +44,16 @@ def create_overhead_objects(row, weekly_shop_summary):
             amount=row[overhead]
         )
         new_weekly_overhead.save()
+
+
+def create_all_objects(fruit_data, overhead_data, weekly_shop_summary):
+    fruit_data.apply(
+        create_sale_objects, 
+        axis=1, 
+        weekly_shop_summary=weekly_shop_summary
+        )
+    overhead_data.apply(
+        create_overhead_objects, 
+        axis=1, 
+        weekly_shop_summary=weekly_shop_summary
+        )

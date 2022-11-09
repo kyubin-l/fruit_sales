@@ -3,4 +3,3 @@ db.sqlite3
 shops.xlsx
 *.xlsx
 */__pycache__/*
-!shops/migrations/__pycache__/**
