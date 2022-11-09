@@ -31,8 +31,34 @@ urlpatterns = [
     path('<int:pk>/deleteshop/', shops.views.ShopDeleteView.as_view(), name='delete_shop'),
     path('<int:pk>/updateshop/', shops.views.ShopUpdateView.as_view(), name='update_shop'),
     path('weekly_import/', shops.views.WeeklyImportYearView.as_view(), name='weekly_import_yearview'),
-    path('weekly_import/<int:year>/', shops.views.WeeklyImportMonthView.as_view(), name='weekly_import_monthview'),
-    path('weekly_import/<int:year>/<int:month>/', shops.views.WeeklyImportWeekView.as_view(), name='weekly_import_weekview'),
-    path('weekly_import/<int:year>/<int:month>/<int:week>/', shops.views.WeeklyImportShopView.as_view(), name='weekly_import_shopview'),
-    path('weekly_import/<int:year>/<int:month>/<int:week>/<str:shopcode>', shops.views.WeeklyImportShopDetail.as_view(), name='weekly_import_shopdetail')
+    path(
+        'weekly_import/<int:year>/',
+        shops.views.WeeklyImportMonthView.as_view(), 
+        name='weekly_import_monthview'
+    ),
+    path(
+        'weekly_import/<int:year>/<int:month>/', 
+        shops.views.WeeklyImportWeekView.as_view(), 
+        name='weekly_import_weekview'
+    ),
+    path(
+        'weekly_import/<int:year>/<int:month>/<int:week>/', 
+        shops.views.WeeklyImportShopView.as_view(), 
+        name='weekly_import_shopview'
+    ),
+    path(
+        'weekly_import/<int:year>/<int:month>/<int:week>/<str:shopcode>', 
+        shops.views.WeeklyImportShopDetail.as_view(), 
+        name='weekly_import_shopdetail'
+    ),
+    path(
+        'weekly_import_details/',
+        shops.views.WeeklyImportDropView.as_view(),
+        name='weekly_views'
+    ),
+    path(
+        'weekly_import_details/show/',
+        shops.views.WeeklyImportDetailView.as_view(),
+        name='show_details'
+    )
 ]

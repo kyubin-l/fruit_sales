@@ -2,6 +2,7 @@
 <head>
     <title>{% block title %} Welcome to this amazing page {% endblock %}</title>
 </head>
+
 <body>
     <a href="{% url 'home' %}"> Home </a><br>
     <a href="{% url 'city_list' %}"> Cities </a><br>
@@ -9,6 +10,7 @@
     <a href="{% url 'create_city' %}"> Register new city </a><br>
     <a href="{% url 'create_shop' %}"> Register new shop </a><br>
     <a href="{% url 'weekly_import_yearview' %}"> Shop weekly sale details </a><br>
+    <a href="{% url 'weekly_views' %}"> Shop weekly sale details all </a><br>
 
     {% block body %}{% endblock %}
 </body>

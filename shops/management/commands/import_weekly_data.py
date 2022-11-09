@@ -19,7 +19,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         delete_data = input('You are about to delete all existing weekly data, are you sure? (YES/Y to confirm, any other key to quit)')
-        if delete_data.lower() in ['y', 'yes']:
+        if delete_data.lower() not in ['y', 'yes']:
+            pass
+        else:
             delete_all_objects()
             data_path = './data/weekly_shop_data'
             for weekly_data in pathlib.Path(data_path).iterdir():
@@ -51,7 +53,7 @@ def import_data(file_path: str):
 
 
 def create_sale_objects(row, weekly_shop_summary):
-    fruit, created = models.Fruit.objects.get_or_create(name=row['fruit'])
+    fruit, _ = models.Fruit.objects.get_or_create(name=row['fruit'])
 
     new_sale = models.WeeklySale(
         shop_date=weekly_shop_summary,
