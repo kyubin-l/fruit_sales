@@ -3,7 +3,8 @@
 
 {% block body %}
     <label>Select Shop<label>
-        <script src="http://127.0.0.1:8000/static/shops/js/htmx.min.js" 
+        {% load static %}
+        <script src='{% static "shops/js/htmx.min.js" %}'>
         crossorigin="anonymous"></script>
         <select name="chosen_shop"
             hx-get="{% url 'show_details' %}"
@@ -17,19 +18,6 @@
                 <option value={{ shop }}>{{ shop }}</option>
             {% endfor %}
         </select>   
-
-        {% comment %} <select name="chosen_date"
-            hx-get="{% url 'show_details' %}"
-            hx-trigger="change"
-            hx-target="#import_detail"
-            hx-swap="innterHTML"
-            hx-include="[name='chosen_date'], [name='chosen_shop']"
-            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-        >
-            {% for date in dates%}
-                <option value={{ date|date:"Y-m-d" }}>{{ date }}</option>
-            {% endfor %}
-        </select>        {% endcomment %}
 
     <label>Select date<label>
         <input type="date"

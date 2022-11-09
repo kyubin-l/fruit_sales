@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand
-import shops.models as models
-
+from shops import models
 class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):

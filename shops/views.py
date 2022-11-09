@@ -10,7 +10,7 @@ from django.utils import timezone
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
-import shops.models as models
+from shops import models
 import shops.forms as forms
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 
@@ -209,7 +209,7 @@ class WeeklyImportDetailView(generic.TemplateView):
         return {'weekly_sales': weekly_sales, 'weekly_overheads': weekly_overheads}
 
 
-def weekly_summary_upload(request):
+def upload_data(request):
     if request.method == 'POST':
         form = forms.WeeklySummaryForm(request.POST, request.FILES)
         if form.is_valid():
@@ -220,21 +220,16 @@ def weekly_summary_upload(request):
                 form.instance.shop = shop
                 form.instance.date = date_object
                 form.save()
-                fruit_data.apply(
-                    import_helpers.create_sale_objects, 
-                    axis=1, 
+                import_helpers.create_all_objects(
+                    fruit_data=fruit_data,
+                    overhead_data=overhead_data,
                     weekly_shop_summary=form.instance
-                    )
-                overhead_data.apply(
-                    import_helpers.create_overhead_objects, 
-                    axis=1, 
-                    weekly_shop_summary=form.instance
-                    )
+                )
                 messages.info(request, 'File uploaded successfully')
-            return HttpResponseRedirect(reverse('upload_summary'))
+            return HttpResponseRedirect(reverse('upload_data'))
     else:
         form = forms.WeeklySummaryForm()
-    return render(request, 'shops/weekly_summary_form.html', {'form': form})
+    return render(request, 'shops/upload_data.html', {'form': form})
 
 
 
