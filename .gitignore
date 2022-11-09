@@ -3,3 +3,5 @@ db.sqlite3
 shops.xlsx
 *.xlsx
 */__pycache__/*
+shops/static/bootstrap_datepicker_plus/**
+shops/static/admin/**
