@@ -60,5 +60,6 @@ urlpatterns = [
         'weekly_import_details/show/',
         shops.views.WeeklyImportDetailView.as_view(),
         name='show_details'
-    )
+    ),
+    path('upload/', shops.views.weekly_summary_upload, name='upload_summary')
 ]

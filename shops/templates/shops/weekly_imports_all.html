@@ -3,7 +3,8 @@
 
 {% block body %}
     <label>Select Shop<label>
-        <script src="http://127.0.0.1:8000/static/shops/js/htmx.min.js" crossorigin="anonymous"></script>
+        <script src="http://127.0.0.1:8000/static/shops/js/htmx.min.js" 
+        crossorigin="anonymous"></script>
         <select name="chosen_shop"
             hx-get="{% url 'show_details' %}"
             hx-trigger="change"
