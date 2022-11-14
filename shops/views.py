@@ -4,11 +4,13 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from datetime import datetime, timedelta
-from django.db.models import Q
+from django.db.models import Q, F, Avg, Max, Sum, Window, RowRange
 from django.conf import settings
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, date
 from django.core.exceptions import ObjectDoesNotExist
+
+import django.db.models.functions as functions
 
 from shops import models
 import shops.forms as forms
@@ -232,7 +234,50 @@ def upload_data(request):
     return render(request, 'shops/upload_data.html', {'form': form})
 
 
+class SummaryReportView(generic.TemplateView):
+    template_name = 'shops/summary_report.html'
 
+    def get_context_data(self, *args, **kwargs):
+        # For each fruit, for each 4-week period
+        start_date = date(2021, 1, 4)
+        sale_data = models.WeeklySale.objects.filter(
+            weekly_shop_summary__date__gte=start_date
+        ).annotate(
+            revenue=F('units_sold')*F('price_per_unit')
+        )
+
+        sales_summary = sale_data.annotate(
+            period_number=(functions.ExtractWeek('weekly_shop_summary__date')+3)/4,
+            keep=(functions.ExtractWeek('weekly_shop_summary__date')+3)%4
+        ).annotate(
+            total_revenue=Window(
+                expression=Sum('revenue'),
+                partition_by=[
+                    F('fruit__name'), 
+                    F('weekly_shop_summary__date__year'),
+                    F('period_number'),
+                    ],
+                order_by='period_number',
+            )
+        )
+        
+
+        summary_cleaned = {}
+        for entry in sales_summary:
+            if entry.keep == 0:
+                start_date = entry.weekly_shop_summary.date
+                if start_date not in summary_cleaned:
+                    summary_cleaned[start_date] = {}
+                if entry.fruit.name not in summary_cleaned[start_date]:
+                    summary_cleaned[start_date][entry.fruit.name] = entry.total_revenue
+
+
+        return {'summary_cleaned': summary_cleaned}
+
+# def get_date(start_date, term_number):
+#     return start_date + timedelta(weeks=(term_number-1)*4)
+
+    # Returns the corresponding monday of the given term number and year
 
 
 
