@@ -15,11 +15,11 @@
         {% for weekly_sale in weekly_sales %}
         <tr>
             <th>{{ weekly_sale.fruit }}</th>
-            <th>{{ weekly_sale.units_bought }}</th>
-            <th>{{ weekly_sale.cost_per_unit }}</th>
-            <th>{{ weekly_sale.units_sold }}</th>
-            <th>{{ weekly_sale.price_per_unit }}</th>
-            <th>{{ weekly_sale.units_wastage }}</th>
+            <td>{{ weekly_sale.units_bought }}</td>
+            <td>{{ weekly_sale.cost_per_unit }}</td>
+            <td>{{ weekly_sale.units_sold }}</td>
+            <td>{{ weekly_sale.price_per_unit }}</td>
+            <td>{{ weekly_sale.units_wastage }}</td>
         </tr>
 
         {% endfor %}
@@ -37,7 +37,7 @@
         {% for overhead in weekly_overheads %}
         <tr>
             <th>{{ overhead.overhead }}</th>
-            <th>{{ overhead.amount }}</th>
+            <td>{{ overhead.amount }}</td>
         </tr>
         {% endfor %}
         

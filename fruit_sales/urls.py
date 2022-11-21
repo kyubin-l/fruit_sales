@@ -61,5 +61,6 @@ urlpatterns = [
         shops.views.WeeklyImportDetailView.as_view(),
         name='show_details'
     ),
-    path('upload_data/', shops.views.upload_data, name='upload_data')
+    path('upload_data/', shops.views.upload_data, name='upload_data'),
+    path('summary_report/', shops.views.SummaryReportView.as_view(), name='summary_report')
 ]
