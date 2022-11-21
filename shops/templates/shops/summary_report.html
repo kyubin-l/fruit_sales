@@ -6,12 +6,8 @@
     <table cellspacing=10>
         <tr>
             <th>Date</th>
-            {% for date, val in summary_cleaned.items %}
-                {% if forloop.first %}
-                    {% for fruit in val.keys%}
-                        <th>{{ fruit }}</th>
-                    {% endfor %}
-                {% endif %}
+            {% for fruit in all_fruits %}
+                <th>{{ fruit.name }}</th>
             {% endfor %}
         </tr>
         {% for date, data in summary_cleaned.items %}

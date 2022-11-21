@@ -245,10 +245,23 @@ class SummaryReportView(generic.TemplateView):
         ).annotate(
             revenue=F('units_sold')*F('price_per_unit')
         )
+        
+        """
+        Annotating the dataset to get only the data needed
+        - First annotate: 
+            - Adds 'period_number' and 'discard' columns to each row. 
+            - 'period_number' will indicate which 4 week period each data entry belongs to. 
+            - 'discard' indicates which rows will not be needed later on when viewing. 
+            - Only the first week of each period is shown, so discard = 0 indicates that row should stay.
 
+        - Second annotate:
+            - Calculates the revnue, partitioning by the fruit, the period number, and the year 
+            - Year is needed incase the data spans over more than 1 year. In that case, there will be 
+            repeated period number which must be differentiated. 
+        """
         sales_summary = sale_data.annotate(
             period_number=(functions.ExtractWeek('weekly_shop_summary__date')+3)/4,
-            keep=(functions.ExtractWeek('weekly_shop_summary__date')+3)%4
+            discard=(functions.ExtractWeek('weekly_shop_summary__date')+3)%4
         ).annotate(
             total_revenue=Window(
                 expression=Sum('revenue'),
@@ -257,27 +270,23 @@ class SummaryReportView(generic.TemplateView):
                     F('weekly_shop_summary__date__year'),
                     F('period_number'),
                     ],
-                order_by='period_number',
+                order_by=['period_number']
             )
         )
         
-
+        # Is there a way to speed this up? Page takes a while to load
         summary_cleaned = {}
         for entry in sales_summary:
-            if entry.keep == 0:
+            if entry.discard == 0:
                 start_date = entry.weekly_shop_summary.date
                 if start_date not in summary_cleaned:
                     summary_cleaned[start_date] = {}
-                if entry.fruit.name not in summary_cleaned[start_date]:
-                    summary_cleaned[start_date][entry.fruit.name] = entry.total_revenue
+                summary_cleaned[start_date][entry.fruit.name] = entry.total_revenue
 
+        all_fruits = models.Fruit.objects.all()
 
-        return {'summary_cleaned': summary_cleaned}
+        return {'summary_cleaned': summary_cleaned, 'all_fruits': all_fruits}
 
-# def get_date(start_date, term_number):
-#     return start_date + timedelta(weeks=(term_number-1)*4)
-
-    # Returns the corresponding monday of the given term number and year
 
 
 
