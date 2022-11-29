@@ -1,0 +1,24 @@
+<html>
+    <header>
+        {{ plot_script | safe }}
+    </header>
+    <h1>Income Summary Report</h1>
+        {{ plot_div | safe }}
+        {{ totals | safe }}
+    <table cellspacing=10>
+        <tr>
+            <th>Date</th>
+            {% for fruit in all_fruits %}
+                <th>{{ fruit.name }}</th>
+            {% endfor %}
+        </tr>
+        {% for date, data in summary_cleaned.items %}
+            <tr>
+                <th>{{ date }}</th>
+                {% for income in data.values %}
+                    <td> {{ income|floatformat:2 }} </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table> 
+</html>

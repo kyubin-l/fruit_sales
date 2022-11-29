@@ -170,12 +170,12 @@ class WeeklyImportDropView(generic.TemplateView):
 
         # Don't need this query below as the datepicker is used instead
         dates = models.WeeklyShopSummary.objects.all().values_list(
-            'date', 
+            'date',
             flat=True
             ).distinct()
 
         shops = models.Shop.objects.all().values_list(
-            'code', 
+            'code',
             flat=True
             ).distinct()
 
@@ -192,10 +192,12 @@ class WeeklyImportDetailView(generic.TemplateView):
             '%Y-%m-%d'
             ).date()
         monday = input_date - timedelta(days=input_date.weekday())
-        weekly_shop_summary = models.WeeklyShopSummary.objects.get(
-            shop=models.Shop.objects.get(code=self.request.GET['chosen_shop']),
+        weekly_shop_summary = (
+            models.WeeklyShopSummary.objects
+            .get(
+                shop=models.Shop.objects.get(code=self.request.GET['chosen_shop']),
                 date=monday
-            )
+            ))
 
         weekly_sales = models.WeeklySale.objects.filter(
             weekly_shop_summary=weekly_shop_summary
@@ -237,7 +239,7 @@ class SummaryReportView(generic.TemplateView):
     def get_context_data(self, *args, **kwargs):
         """
         New method using more Python methods and less Django querying. 
-        Seems a bit smoother and faster, still need to investigate bit more 
+        Seems a bit smoother and faster, still need to investigate bit more
         about django annotation with windows (branch part_3_1).
         """
         all_fruits = models.Fruit.objects.all().order_by('name')
@@ -247,7 +249,7 @@ class SummaryReportView(generic.TemplateView):
             .first()
             .date
         )
-        start_date = first_date
+        start_date = date(2021, 10, 10)
         start_date = start_date - timedelta(days=start_date.weekday())
         last_date = (
             models.WeeklyShopSummary.objects
@@ -268,9 +270,12 @@ class SummaryReportView(generic.TemplateView):
         while cur_date < last_date:
             summary_cleaned[cur_date] = {}
             next_date = cur_date + period_duration
-            duration_data = sale_data.filter(
-                        weekly_shop_summary__date__gte=cur_date,
-                        weekly_shop_summary__date__lt=next_date,
+            duration_data = (
+                sale_data
+                .filter(
+                    weekly_shop_summary__date__gte=cur_date,
+                    weekly_shop_summary__date__lt=next_date,
+                )
             )
             for fruit in all_fruits:
                 total_revenue = (
@@ -301,4 +306,101 @@ class SummaryReportView(generic.TemplateView):
             'all_fruits': all_fruits,
             'plot_script': plot_script,
             'plot_div': plot_div,
-            }
+        }
+
+
+class SummaryReportViewInteractive(generic.TemplateView):
+    template_name = "shops/summary_report_interactive.html"
+
+    def get_context_data(self):
+        shops = models.Shop.objects.all().values_list(
+            'code',
+            flat=True
+            ).distinct()
+
+        dates = models.WeeklyShopSummary.objects.all().values_list(
+            'date',
+            flat=True
+            ).distinct()
+
+        return {'shops': shops, 'dates': dates}
+
+
+class SummaryReportDetailView(generic.TemplateView):
+    template_name = "shops/partials/summary_report_partial.html"
+
+    def get_context_data(self, **kwargs):
+        all_fruits = models.Fruit.objects.all().order_by('name')
+        start_date = datetime.strptime(
+            self.request.GET['start_date'],
+            '%Y-%m-%d'
+        ).date()
+        end_date = datetime.strptime(
+            self.request.GET['end_date'],
+            '%Y-%m-%d'
+        ).date()
+        shop = self.request.GET['chosen_shop']
+
+        start_date = start_date - timedelta(days=start_date.weekday())
+        end_date = end_date - timedelta(days=end_date.weekday())
+
+        sale_data = (
+            models.WeeklySale.objects
+            .filter(
+                weekly_shop_summary__date__gte=start_date,
+                weekly_shop_summary__date__lt=end_date,
+            )
+            .annotate(revenue=F('units_sold')*F('price_per_unit'))
+        )
+
+        if shop == 'all':
+            pass
+        else:
+            sale_data = sale_data.filter(
+                weekly_shop_summary__shop__code=shop
+            )
+
+        summary_cleaned = {}
+        cur_date = start_date
+        period_duration = timedelta(weeks=4)
+
+        while cur_date < end_date:
+            summary_cleaned[cur_date] = {}
+            next_date = cur_date + period_duration
+            duration_data = (
+                sale_data
+                .filter(
+                    weekly_shop_summary__date__gte=cur_date,
+                    weekly_shop_summary__date__lt=next_date,
+                )
+            )
+            for fruit in all_fruits:
+                total_revenue = (
+                    duration_data
+                    .filter(fruit=fruit)
+                    .aggregate(Sum('revenue'))
+                )
+                summary_cleaned[cur_date][fruit.name] = \
+                    total_revenue['revenue__sum']
+            cur_date = next_date
+
+        plot = plotting.figure()
+
+        for i, fruit in enumerate(all_fruits):
+            plot.line(
+                x=list(range(len(summary_cleaned))),
+                y=list(
+                    summary_cleaned[period_date][fruit.name] 
+                    for period_date in summary_cleaned.keys()
+                ),
+                legend_label=fruit.name,
+                line_color=palettes.Category20_20[i]
+            )
+        plot_script, plot_div = embed.components(plot)
+
+        return {
+            'summary_cleaned': summary_cleaned,
+            'all_fruits': all_fruits,
+            'plot_script': plot_script,
+            'plot_div': plot_div,
+        }

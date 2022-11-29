@@ -62,5 +62,7 @@ urlpatterns = [
         name='show_details'
     ),
     path('upload_data/', shops.views.upload_data, name='upload_data'),
-    path('summary_report/', shops.views.SummaryReportView.as_view(), name='summary_report')
+    path('summary_report/', shops.views.SummaryReportView.as_view(), name='summary_report'),
+    path('summary_report_interactive/', shops.views.SummaryReportViewInteractive.as_view(), name='summary_report_interactive'),
+    path('get_summary_report_data/', shops.views.SummaryReportDetailView.as_view(), name='get_summary_report_data'),
 ]

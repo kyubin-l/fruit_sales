@@ -1,0 +1,67 @@
+{% extends "shops/base.html" %}
+{% block title %}Weekly Shop Summary Interactive{% endblock %}
+
+{% block extra_headers %}
+    <header>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.0.1.min.js"
+            crossorigin="anonymous"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.0.1.min.js"
+            crossorigin="anonymous"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.0.1.min.js"
+            crossorigin="anonymous"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.0.1.min.js"
+            crossorigin="anonymous"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.0.1.min.js"
+            crossorigin="anonymous"></script>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <label>Select Shop<label>
+        {% load static %}
+        <script src='{% static "shops/js/htmx.min.js" %}'>
+        crossorigin="anonymous"></script>
+        <select name="chosen_shop"
+            hx-get="{% url 'get_summary_report_data' %}"
+            hx-trigger="change"
+            hx-target="#summary_detail"
+            hx-swap="innterHTML"
+            hx-include="[name='start_date'], [name='end_date'], [name='chosen_shop']"
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        >   
+            <option value='all'>All</option>
+            {% for shop in shops %}
+                <option value={{ shop }}>{{ shop }}</option>    
+            {% endfor %}
+        </select>   
+
+    <label>Select Start date<label>
+        <input type="date"
+            id="start"
+            name="start_date"
+            value="2018-01-01" 
+            min="2018-01-01" 
+            max="2021-12-31"
+            hx-get="{% url 'get_summary_report_data' %}"
+            hx-trigger="change"
+            hx-target="#summary_detail"
+            hx-swap="innterHTML"
+            hx-include="[name='start_date'], [name='end_date'], [name='chosen_shop']"
+        >
+    
+    <label>Select End date<label>
+        <input type="date"
+            id="start"
+            name="end_date"
+            value="2018-01-01" 
+            min="2018-01-01" 
+            max="2021-12-31"
+            hx-get="{% url 'get_summary_report_data' %}"
+            hx-trigger="change"
+            hx-target="#summary_detail"
+            hx-swap="innterHTML"
+            hx-include="[name='start_date'], [name='end_date'], [name='chosen_shop']"
+        >
+
+    <div id='summary_detail'></div>
+{% endblock %}
