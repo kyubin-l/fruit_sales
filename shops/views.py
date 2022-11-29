@@ -4,20 +4,17 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from datetime import datetime, timedelta
-from django.db.models import Q, F, Avg, Max, Sum, Window, RowRange
+from django.db.models import Q, F, Avg, Max, Sum, Window, Subquery
 from django.conf import settings
-from django.utils import timezone
 from datetime import datetime, date
-from django.core.exceptions import ObjectDoesNotExist
-
 import django.db.models.functions as functions
-
 from shops import models
-import shops.forms as forms
-from bootstrap_datepicker_plus.widgets import DatePickerInput
 
-import re
-import pandas as pd
+from bokeh import plotting
+from bokeh import palettes
+from bokeh import embed
+
+import shops.forms as forms
 import shops.utilities.import_helpers as import_helpers
 
 
@@ -238,55 +235,70 @@ class SummaryReportView(generic.TemplateView):
     template_name = 'shops/summary_report.html'
 
     def get_context_data(self, *args, **kwargs):
-        # For each fruit, for each 4-week period
-        start_date = date(2021, 1, 4)
-        sale_data = models.WeeklySale.objects.filter(
-            weekly_shop_summary__date__gte=start_date
-        ).annotate(
-            revenue=F('units_sold')*F('price_per_unit')
-        )
-        
         """
-        Annotating the dataset to get only the data needed
-        - First annotate: 
-            - Adds 'period_number' and 'discard' columns to each row. 
-            - 'period_number' will indicate which 4 week period each data entry belongs to. 
-            - 'discard' indicates which rows will not be needed later on when viewing. 
-            - Only the first week of each period is shown, so discard = 0 indicates that row should stay.
+        New method using more Python methods and less Django querying. 
+        Seems a bit smoother and faster, still need to investigate bit more 
+        about django annotation with windows (branch part_3_1).
+        """
+        all_fruits = models.Fruit.objects.all().order_by('name')
+        first_date = (
+            models.WeeklyShopSummary.objects
+            .order_by('date')
+            .first()
+            .date
+        )
+        start_date = first_date
+        start_date = start_date - timedelta(days=start_date.weekday())
+        last_date = (
+            models.WeeklyShopSummary.objects
+            .order_by('date')
+            .last()
+            .date
+        )
+        sale_data = (
+            models.WeeklySale.objects
+            .filter(weekly_shop_summary__date__gte=start_date)
+            .annotate(revenue=F('units_sold')*F('price_per_unit'))
+        )
 
-        - Second annotate:
-            - Calculates the revnue, partitioning by the fruit, the period number, and the year 
-            - Year is needed incase the data spans over more than 1 year. In that case, there will be 
-            repeated period number which must be differentiated. 
-        """
-        sales_summary = sale_data.annotate(
-            period_number=(functions.ExtractWeek('weekly_shop_summary__date')+3)/4,
-            discard=(functions.ExtractWeek('weekly_shop_summary__date')+3)%4
-        ).annotate(
-            total_revenue=Window(
-                expression=Sum('revenue'),
-                partition_by=[
-                    F('fruit__name'), 
-                    F('weekly_shop_summary__date__year'),
-                    F('period_number'),
-                    ],
-                order_by=['period_number']
-            )
-        )
-        
-        # Is there a way to speed this up? Page takes a while to load
         summary_cleaned = {}
-        for entry in sales_summary:
-            if entry.discard == 0:
-                start_date = entry.weekly_shop_summary.date
-                if start_date not in summary_cleaned:
-                    summary_cleaned[start_date] = {}
-                summary_cleaned[start_date][entry.fruit.name] = entry.total_revenue
+        cur_date = start_date
+        period_duration = timedelta(weeks=4)
 
-        all_fruits = models.Fruit.objects.all()
+        while cur_date < last_date:
+            summary_cleaned[cur_date] = {}
+            next_date = cur_date + period_duration
+            duration_data = sale_data.filter(
+                        weekly_shop_summary__date__gte=cur_date,
+                        weekly_shop_summary__date__lt=next_date,
+            )
+            for fruit in all_fruits:
+                total_revenue = (
+                    duration_data
+                    .filter(fruit=fruit)
+                    .aggregate(Sum('revenue'))
+                )
+                summary_cleaned[cur_date][fruit.name] = \
+                    total_revenue['revenue__sum']
+            cur_date = next_date
 
-        return {'summary_cleaned': summary_cleaned, 'all_fruits': all_fruits}
+        plot = plotting.figure()
 
+        for i, fruit in enumerate(all_fruits):
+            plot.line(
+                x=list(range(len(summary_cleaned))),
+                y=list(
+                    summary_cleaned[period_date][fruit.name] 
+                    for period_date in summary_cleaned.keys()
+                ),
+                legend_label=fruit.name,
+                line_color=palettes.Category20_20[i]
+            )
+        plot_script, plot_div = embed.components(plot)
 
-
-
+        return {
+            'summary_cleaned': summary_cleaned,
+            'all_fruits': all_fruits,
+            'plot_script': plot_script,
+            'plot_div': plot_div,
+            }

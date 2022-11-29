@@ -1,8 +1,24 @@
 {% extends "shops/base.html" %}
 {% block title %}Summary Report Page{% endblock %}
 
+{% block extra_headers %}
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.0.1.min.js"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.0.1.min.js"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.0.1.min.js"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.0.1.min.js"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.0.1.min.js"
+            crossorigin="anonymous"></script>
+  {{ plot_script | safe }}
+{% endblock %}
+
 {% block body %}
     <h1>Income Summary Report</h1>
+    {{ plot_div | safe }}
+    {{ totals | safe }}
     <table cellspacing=10>
         <tr>
             <th>Date</th>
